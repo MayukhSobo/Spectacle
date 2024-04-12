@@ -13,21 +13,22 @@ import (
 )
 
 type model struct {
-	question string
-	width int
-	height int
-	answerField textinput.Model
-	styles *Styles
-	choices     []string   // Add this line
-    choiceIndex int        // Add this line
+	question      string
+	width         int
+	height        int
+	answerField   textinput.Model
+	styles        *Styles
+	choices       []string // Add this line
+	choiceIndex   int      // Add this line
+	displayChoice bool
 }
 
 type Styles struct {
-	BorderColor lipgloss.Color
-	InputField lipgloss.Style
-	Banner []lipgloss.Style
-	Choice      lipgloss.Style // Style for unselected choices
-    SelectedChoice lipgloss.Style // Style for the selected choice
+	BorderColor    lipgloss.Color
+	InputField     lipgloss.Style
+	Banner         []lipgloss.Style
+	Choice         lipgloss.Style // Style for unselected choices
+	SelectedChoice lipgloss.Style // Style for the selected choice
 }
 
 // Helper function for converting colors to hex. Assumes a value between 0 and 1.
@@ -38,6 +39,7 @@ func colorFloatToHex(f float64) (s string) {
 	}
 	return
 }
+
 // Convert a colorful.Color to a hexadecimal format.
 func colorToHex(c colorful.Color) string {
 	return fmt.Sprintf("#%s%s%s", colorFloatToHex(c.R), colorFloatToHex(c.G), colorFloatToHex(c.B))
@@ -57,20 +59,19 @@ func DefaultStyles() *Styles {
 	s := new(Styles)
 	s.BorderColor = lipgloss.Color("#81b2b5")
 	s.InputField = lipgloss.NewStyle().
-							BorderForeground(s.BorderColor).
-							BorderStyle(lipgloss.NormalBorder()).
-							Padding(1).
-							Width(80)
+		BorderForeground(s.BorderColor).
+		BorderStyle(lipgloss.NormalBorder()).
+		Padding(1).
+		Width(80)
 	banner := Banner()
 	s.Banner = makeRampStyles("#B14FFF", "#00FFA3", float64(len(banner)))
 
-
-    // Style for the selected choice
-    s.SelectedChoice = lipgloss.NewStyle().
-        // PaddingLeft(2).
-        Foreground(lipgloss.Color("#000000")). // Example color
-        Background(lipgloss.Color("#81b2b5")). // Example color
-        Bold(true).PaddingRight(2).PaddingLeft(2)
+	// Style for the selected choice
+	s.SelectedChoice = lipgloss.NewStyle().
+		// PaddingLeft(2).
+		Foreground(lipgloss.Color("#000000")). // Example color
+		Background(lipgloss.Color("#81b2b5")). // Example color
+		Bold(true).PaddingRight(2).PaddingLeft(2)
 	return s
 }
 
@@ -80,11 +81,12 @@ func NewModel(question string) *model {
 	ansField.Placeholder = "your endpoint..."
 	ansField.Focus()
 	return &model{
-		question: question,
-		answerField: ansField,
-		styles: styles,
-		choices:     []string{"Connect", "Save", "Cancel"}, // Example choices
-        choiceIndex: 0, // Default to the first choice
+		question:      question,
+		answerField:   ansField,
+		styles:        styles,
+		choices:       []string{"Connect", "Save", "Cancel"}, // Example choices
+		choiceIndex:   0,                                     // Default to the first choice
+		displayChoice: false,
 	}
 }
 
@@ -102,15 +104,18 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl+c", "q":
 			return m, tea.Quit
 		case "up", "k": // Use 'k' for Vim-like keybindings
-            if m.choiceIndex > 0 {
-                m.choiceIndex--
-            }
-        case "down", "j": // Use 'j' for Vim-like keybindings
-            if m.choiceIndex < len(m.choices)-1 {
-                m.choiceIndex++
-            }
+			if m.choiceIndex > 0 {
+				m.choiceIndex--
+			}
+		case "down", "j": // Use 'j' for Vim-like keybindings
+			if m.choiceIndex < len(m.choices)-1 {
+				m.choiceIndex++
+			}
 		case "enter":
-			m.answerField.SetValue("done!")
+			m.displayChoice = true
+			return m, nil
+		case "esc":
+			m.displayChoice = false
 			return m, nil
 		}
 	}
@@ -130,24 +135,28 @@ func (m model) View() string {
 	bannerRendered += "\n"
 
 	// Build choices display
-    var choicesDisplay string
-    for i, choice := range m.choices {
-        // Apply the appropriate style based on selection
-        choiceStyle := m.styles.Choice
-        if i == m.choiceIndex {
-            choiceStyle = m.styles.SelectedChoice
-        }
-        choicesDisplay += choiceStyle.Render(choice) + "\n"
-    }
+	var choicesDisplay string
+	for i, choice := range m.choices {
+		// Apply the appropriate style based on selection
+		choiceStyle := m.styles.Choice
+		if i == m.choiceIndex {
+			choiceStyle = m.styles.SelectedChoice
+		}
+		choicesDisplay += choiceStyle.Render(choice) + "\n"
+	}
 
 	// Organize the layout
-    form := lipgloss.JoinVertical(
+	if !m.displayChoice {
+		choicesDisplay = ""
+	}
+
+	form := lipgloss.JoinVertical(
 		lipgloss.Center,
-        bannerRendered,
-        m.question,
-        m.styles.InputField.Render(m.answerField.View()),
-        choicesDisplay,
-    )
+		bannerRendered,
+		m.question,
+		m.styles.InputField.Render(m.answerField.View()),
+		choicesDisplay,
+	)
 
 	return lipgloss.Place(
 		m.width,
@@ -155,10 +164,8 @@ func (m model) View() string {
 		lipgloss.Center,
 		lipgloss.Center,
 		form,
-	) 
+	)
 }
-
-
 
 func Start() {
 	f, err := tea.LogToFile("debug.log", "debug")
