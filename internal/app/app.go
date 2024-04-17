@@ -112,7 +112,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.choiceIndex++
 			}
 		case "enter":
-			m.displayChoice = true
+			if !m.displayChoice && m.answerField.Value() != "" {
+				m.displayChoice = true
+			} else if m.answerField.Value() != "" {
+				if m.choiceIndex == 2 {
+					m.displayChoice = false
+					m.answerField.SetValue("")
+				}
+				m.displayChoice = false
+			}
 			return m, nil
 		case "esc":
 			m.displayChoice = false
