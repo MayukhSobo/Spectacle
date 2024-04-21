@@ -1,3 +1,5 @@
 debug.log
 go.sum
 vendor
+*.code-workspace
+spectacle*
