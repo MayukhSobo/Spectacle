@@ -21,14 +21,14 @@ type InputFieldStyle struct {
 type HomeScreenStyle struct {
 	InpFieldStyle lipgloss.Style
 	BannerStyle   []lipgloss.Style
-	HelpStyle     []lipgloss.Style
+	HelpStyle     lipgloss.Style
 }
 
 func newHomeScreenStyle(bannerProps *BannerStyleProperties) *HomeScreenStyle {
 	return &HomeScreenStyle{
 		InpFieldStyle: lipgloss.NewStyle(),
 		BannerStyle:   makeRampStyles(bannerProps),
-		HelpStyle:     nil,
+		HelpStyle:     lipgloss.NewStyle().PaddingTop(10),
 	}
 }
 

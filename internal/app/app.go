@@ -152,7 +152,7 @@ func (m *HomeScreenModel) View() string {
 		lipgloss.Center,
 		BannerRendered(),
 		homeScreenStyle.InpFieldStyle.Render(m.addressField.View()),
-		m.help.View(m.keys),
+		homeScreenStyle.HelpStyle.Render(m.help.View(m.keys)),
 		//applyStyle.Render(m.addressField.View()),
 	)
 
