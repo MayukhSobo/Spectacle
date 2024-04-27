@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 	"os"
-
-	"github.com/MayukhSobo/spectacle/cmd"
+	"spectacle/cmd"
+	// "github.com/MayukhSobo/spectacle/cmd"
 )
 
 func main() {

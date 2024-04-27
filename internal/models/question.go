@@ -1,12 +1,11 @@
 package models
 
-import "github.com/MayukhSobo/spectacle/internal/types"
-
+import "spectacle/internal/types"
 
 type Question struct {
 	Ques string
-	Ans string
-	Inp types.Input
+	Ans  string
+	Inp  types.Input
 }
 
 func NewQuestion(q string) Question {

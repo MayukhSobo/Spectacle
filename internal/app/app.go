@@ -6,11 +6,35 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/charmbracelet/bubbles/help"
+	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/lucasb-eyer/go-colorful"
 )
+
+type keyMap struct {
+	Use  key.Binding
+	Quit key.Binding
+}
+
+func (k keyMap) ShowKeys() []key.Binding {
+	return []key.Binding{k.Use, k.Quit}
+}
+
+var keys = keyMap{
+	Use: key.NewBinding(
+		key.WithKeys("enter"),
+		key.WithHelp("↵/return/enter", "use address"),
+	),
+}
+
+// func (k keyMap) FullHelp() []key.Binding {
+// 	return [][]key.Binding{
+// 		{}
+// 	}
+// }
 
 type model struct {
 	question      string
@@ -21,6 +45,8 @@ type model struct {
 	choices       []string // Add this line
 	choiceIndex   int      // Add this line
 	displayChoice bool
+	keys          keyMap
+	help          help.Model
 }
 
 type Styles struct {
@@ -87,6 +113,7 @@ func NewModel(question string) *model {
 		choices:       []string{"Connect", "Save", "Cancel"}, // Example choices
 		choiceIndex:   0,                                     // Default to the first choice
 		displayChoice: false,
+		keys:          keys,
 	}
 }
 
