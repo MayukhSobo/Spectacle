@@ -1,217 +1,175 @@
 package app
 
 import (
-	"fmt"
-	"log"
-	"os"
-	"strconv"
-
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/lucasb-eyer/go-colorful"
+	"os"
+	"spectacle/log"
 )
 
 type keyMap struct {
-	Use  key.Binding
-	Quit key.Binding
+	Use     key.Binding
+	Save    key.Binding
+	Connect key.Binding
+	Quit    key.Binding
+	Clear   key.Binding
+	Show    key.Binding
+	Help    key.Binding
 }
 
-func (k keyMap) ShowKeys() []key.Binding {
-	return []key.Binding{k.Use, k.Quit}
+// ShortHelp returns keybindings to be shown in the mini help view. It's part
+// of the key.Map interface.
+func (k keyMap) ShortHelp() []key.Binding {
+	return []key.Binding{k.Help, k.Quit}
 }
 
-var keys = keyMap{
-	Use: key.NewBinding(
-		key.WithKeys("enter"),
-		key.WithHelp("↵/return/enter", "use address"),
-	),
-}
-
-// func (k keyMap) FullHelp() []key.Binding {
-// 	return [][]key.Binding{
-// 		{}
-// 	}
-// }
-
-type model struct {
-	question      string
-	width         int
-	height        int
-	answerField   textinput.Model
-	styles        *Styles
-	choices       []string // Add this line
-	choiceIndex   int      // Add this line
-	displayChoice bool
-	keys          keyMap
-	help          help.Model
-}
-
-type Styles struct {
-	BorderColor    lipgloss.Color
-	InputField     lipgloss.Style
-	Banner         []lipgloss.Style
-	Choice         lipgloss.Style // Style for unselected choices
-	SelectedChoice lipgloss.Style // Style for the selected choice
-}
-
-// Helper function for converting colors to hex. Assumes a value between 0 and 1.
-func colorFloatToHex(f float64) (s string) {
-	s = strconv.FormatInt(int64(f*255), 16)
-	if len(s) == 1 {
-		s = "0" + s
-	}
-	return
-}
-
-// Convert a colorful.Color to a hexadecimal format.
-func colorToHex(c colorful.Color) string {
-	return fmt.Sprintf("#%s%s%s", colorFloatToHex(c.R), colorFloatToHex(c.G), colorFloatToHex(c.B))
-}
-func makeRampStyles(colorA, colorB string, steps float64) (s []lipgloss.Style) {
-	cA, _ := colorful.Hex(colorA)
-	cB, _ := colorful.Hex(colorB)
-
-	for i := 0.0; i < steps; i++ {
-		c := cA.BlendLuv(cB, i/steps)
-		s = append(s, lipgloss.NewStyle().Foreground(lipgloss.Color(colorToHex(c))))
-	}
-	return
-}
-
-func DefaultStyles() *Styles {
-	s := new(Styles)
-	s.BorderColor = lipgloss.Color("#81b2b5")
-	s.InputField = lipgloss.NewStyle().
-		BorderForeground(s.BorderColor).
-		BorderStyle(lipgloss.NormalBorder()).
-		Padding(1).
-		Width(80)
-	banner := Banner()
-	s.Banner = makeRampStyles("#B14FFF", "#00FFA3", float64(len(banner)))
-
-	// Style for the selected choice
-	s.SelectedChoice = lipgloss.NewStyle().
-		// PaddingLeft(2).
-		Foreground(lipgloss.Color("#000000")). // Example color
-		Background(lipgloss.Color("#81b2b5")). // Example color
-		Bold(true).PaddingRight(2).PaddingLeft(2)
-	return s
-}
-
-func NewModel(question string) *model {
-	styles := DefaultStyles()
-	ansField := textinput.New()
-	ansField.Placeholder = "your endpoint..."
-	ansField.Focus()
-	return &model{
-		question:      question,
-		answerField:   ansField,
-		styles:        styles,
-		choices:       []string{"Connect", "Save", "Cancel"}, // Example choices
-		choiceIndex:   0,                                     // Default to the first choice
-		displayChoice: false,
-		keys:          keys,
+// FullHelp returns keybindings for the expanded help view. It's part of the
+// key.Map interface.
+func (k keyMap) FullHelp() [][]key.Binding {
+	return [][]key.Binding{
+		{k.Use, k.Save, k.Connect, k.Clear, k.Show}, // first column
+		{k.Help, k.Quit}, // second column
 	}
 }
 
-func (m model) Init() tea.Cmd {
+type WindowSize struct {
+	Width  int
+	Height int
+}
+
+func newKeyMap() *keyMap {
+	return &keyMap{
+		Use: key.NewBinding(
+			key.WithKeys("enter"),
+			key.WithHelp("↵/return/enter", "use address"),
+		),
+		Save: key.NewBinding(
+			key.WithKeys("ctrl+s"),
+			key.WithHelp("ctrl+s", "save address"),
+		),
+		Connect: key.NewBinding(
+			key.WithKeys("c", "C"),
+			key.WithHelp("c/c", "connect"),
+		),
+		Quit: key.NewBinding(
+			key.WithKeys("esc"),
+			key.WithHelp("esc", "quit"),
+		),
+		Clear: key.NewBinding(
+			key.WithKeys("r", "R"),
+			key.WithHelp("r/R", "clear"),
+		),
+		Show: key.NewBinding(
+			key.WithKeys("o", "O"),
+			key.WithHelp("o/O", "show saved addresses"),
+		),
+		Help: key.NewBinding(
+			key.WithKeys("ctrl+h"),
+			key.WithHelp("ctrl+h", "toggle help"),
+		),
+	}
+}
+
+type HomeScreenModel struct {
+	addressField textinput.Model
+	keys         *keyMap
+	size         *WindowSize
+	help         help.Model
+}
+
+func NewHomeScreenModel(defaultTextAddrField string) *HomeScreenModel {
+	addrField := textinput.New()
+	addrField.Placeholder = defaultTextAddrField
+	addrField.ShowSuggestions = true
+	return &HomeScreenModel{
+		addressField: addrField,
+		keys:         newKeyMap(),
+		size: &WindowSize{
+			Width:  0,
+			Height: 0,
+		},
+		help: help.New(),
+	}
+}
+
+func DefaultInpStyle(wsize *WindowSize, frac int) *InputFieldStyle {
+	return &InputFieldStyle{
+		Width:       (wsize.Width * frac) / 100,
+		BorderColor: "#81b2b5",
+		BorderStyle: lipgloss.RoundedBorder(),
+		Padding:     1,
+	}
+}
+
+func (m *HomeScreenModel) Init() tea.Cmd {
+	homeScreenStyle = newHomeScreenStyle(&BannerStyleProperties{
+		BannerGradientStartColor: "#B14FFF",
+		BannerGradientEndColor:   "#00FFA3",
+	})
 	return nil
 }
-func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+
+func (m *HomeScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
+	// If the address input field is not focused,
+	// focus it
+	if !m.addressField.Focused() {
+		m.addressField.Focus()
+	}
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
-		m.height = msg.Height
-		m.width = msg.Width
+		log.Logger.Debug("Received window resize event")
+		m.size.Width = msg.Width
+		m.size.Height = msg.Height
+		defaultInpStyle := DefaultInpStyle(m.size, 80)
+		homeScreenStyle.AddInputFieldStyle(defaultInpStyle)
 	case tea.KeyMsg:
-		switch msg.String() {
-		case "ctrl+c", "q":
+		switch {
+		case key.Matches(msg, m.keys.Quit):
+			log.Logger.Debug("Received quit key to exit the application")
 			return m, tea.Quit
-		case "up", "k": // Use 'k' for Vim-like keybindings
-			if m.choiceIndex > 0 {
-				m.choiceIndex--
-			}
-		case "down", "j": // Use 'j' for Vim-like keybindings
-			if m.choiceIndex < len(m.choices)-1 {
-				m.choiceIndex++
-			}
-		case "enter":
-			if !m.displayChoice && m.answerField.Value() != "" {
-				m.displayChoice = true
-			} else if m.answerField.Value() != "" {
-				if m.choiceIndex == 2 {
-					m.displayChoice = false
-					m.answerField.SetValue("")
-				}
-				m.displayChoice = false
-			}
-			return m, nil
-		case "esc":
-			m.displayChoice = false
-			return m, nil
+		case key.Matches(msg, m.keys.Help):
+			m.help.ShowAll = !m.help.ShowAll
 		}
+
 	}
-	m.answerField, cmd = m.answerField.Update(msg)
+	m.addressField, cmd = m.addressField.Update(msg)
 	return m, cmd
 }
-func (m model) View() string {
-	if m.width == 0 {
-		return "Loading..."
+
+func (m *HomeScreenModel) View() string {
+	if m.size.Width < 150 || m.size.Height < 45 {
+		log.Logger.Errorf("Screen too small "+
+			"for application (height = %d, width = %d)", m.size.Height, m.size.Width)
+		return "Screen too small..."
 	}
 
-	var bannerRendered string
-	banner := Banner()
-	for i, each := range m.styles.Banner {
-		bannerRendered += each.Render(string(banner[i]))
-	}
-	bannerRendered += "\n"
-
-	// Build choices display
-	var choicesDisplay string
-	for i, choice := range m.choices {
-		// Apply the appropriate style based on selection
-		choiceStyle := m.styles.Choice
-		if i == m.choiceIndex {
-			choiceStyle = m.styles.SelectedChoice
-		}
-		choicesDisplay += choiceStyle.Render(choice) + "\n"
-	}
-
-	// Organize the layout
-	if !m.displayChoice {
-		choicesDisplay = ""
-	}
-
-	form := lipgloss.JoinVertical(
+	m.help.View(m.keys)
+	content := lipgloss.JoinVertical(
 		lipgloss.Center,
-		bannerRendered,
-		m.question,
-		m.styles.InputField.Render(m.answerField.View()),
-		choicesDisplay,
+		BannerRendered(),
+		homeScreenStyle.InpFieldStyle.Render(m.addressField.View()),
+		m.help.View(m.keys),
+		//applyStyle.Render(m.addressField.View()),
 	)
 
 	return lipgloss.Place(
-		m.width,
-		m.height,
+		m.size.Width,
+		m.size.Height,
 		lipgloss.Center,
-		lipgloss.Center,
-		form,
+		0.8,
+		content,
 	)
 }
 
 func Start() {
-	f, err := tea.LogToFile("debug.log", "debug")
-	if err != nil {
-		fmt.Println("fatal:", err)
-		os.Exit(1)
-	}
-	defer f.Close()
-	m := NewModel("What is the ETCD endpoint?")
+	m := NewHomeScreenModel("What is the ETCD endpoint?")
 	p := tea.NewProgram(m, tea.WithAltScreen())
 	if _, err := p.Run(); err != nil {
-		log.Fatal(err)
+		log.Logger.Errorf("Failed to start program: %v", err)
+		os.Exit(1)
 	}
 }
