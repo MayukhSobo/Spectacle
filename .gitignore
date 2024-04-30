@@ -3,3 +3,4 @@ go.sum
 vendor
 *.code-workspace
 spectacle*
+/.idea/*

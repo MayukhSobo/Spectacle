@@ -20,6 +20,11 @@ type keyMap struct {
 	Help    key.Binding
 }
 
+// TODO: Implement input sanitization
+func isSafeInput(input string) bool {
+	return true
+}
+
 // ShortHelp returns keybindings to be shown in the mini help view. It's part
 // of the key.Map interface.
 func (k keyMap) ShortHelp() []key.Binding {
@@ -44,46 +49,53 @@ func newKeyMap() *keyMap {
 	return &keyMap{
 		Use: key.NewBinding(
 			key.WithKeys("enter"),
-			key.WithHelp("↵/return/enter", "use address"),
+			key.WithHelp("return/enter", "use address"),
 		),
 		Save: key.NewBinding(
-			key.WithKeys("ctrl+s"),
-			key.WithHelp("ctrl+s", "save address"),
+			key.WithKeys("s"),
+			key.WithHelp("s", "save address"),
 		),
 		Connect: key.NewBinding(
-			key.WithKeys("c", "C"),
-			key.WithHelp("c/c", "connect"),
+			key.WithKeys("c"),
+			key.WithHelp("c", "connect to endpoint"),
 		),
 		Quit: key.NewBinding(
 			key.WithKeys("esc"),
 			key.WithHelp("esc", "quit"),
 		),
 		Clear: key.NewBinding(
-			key.WithKeys("r", "R"),
-			key.WithHelp("r/R", "clear"),
+			key.WithKeys("r"),
+			key.WithHelp("r", "clear"),
 		),
 		Show: key.NewBinding(
-			key.WithKeys("o", "O"),
-			key.WithHelp("o/O", "show saved addresses"),
+			key.WithKeys("o"),
+			key.WithHelp("o", "show saved addresses"),
 		),
 		Help: key.NewBinding(
-			key.WithKeys("ctrl+h"),
-			key.WithHelp("ctrl+h", "toggle help"),
+			key.WithKeys("?"),
+			key.WithHelp("?", "toggle help"),
 		),
 	}
 }
 
+type InputModel struct {
+	textInp      textinput.Model
+	currentData  string
+	currentIndex int
+}
+
 type HomeScreenModel struct {
-	addressField textinput.Model
+	addressField *InputModel
 	keys         *keyMap
 	size         *WindowSize
 	help         help.Model
 }
 
 func NewHomeScreenModel(defaultTextAddrField string) *HomeScreenModel {
-	addrField := textinput.New()
-	addrField.Placeholder = defaultTextAddrField
-	addrField.ShowSuggestions = true
+	addrField := new(InputModel)
+	addrField.textInp = textinput.New()
+	addrField.textInp.Placeholder = defaultTextAddrField
+	addrField.textInp.ShowSuggestions = true
 	return &HomeScreenModel{
 		addressField: addrField,
 		keys:         newKeyMap(),
@@ -116,8 +128,8 @@ func (m *HomeScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 	// If the address input field is not focused,
 	// focus it
-	if !m.addressField.Focused() {
-		m.addressField.Focus()
+	if !m.addressField.textInp.Focused() {
+		m.addressField.textInp.Focus()
 	}
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
@@ -133,15 +145,42 @@ func (m *HomeScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		case key.Matches(msg, m.keys.Help):
 			m.help.ShowAll = !m.help.ShowAll
+		case key.Matches(msg, m.keys.Clear):
+			m.addressField.currentData = ""
+		default:
+			if msg.String() != "?" && msg.Type == tea.KeyRunes {
+				m.addressField.currentData += msg.String()
+			}
+			if msg.Type == tea.KeyBackspace && m.addressField.currentData != "" {
+				n := len(m.addressField.currentData)
+				m.addressField.currentData = m.addressField.currentData[:n-1]
+			}
 		}
 
+		if isSafeInput(m.addressField.currentData) {
+			m.addressField.textInp.SetValue(m.addressField.currentData)
+			m.addressField.textInp.CursorEnd()
+		}
 	}
-	m.addressField, cmd = m.addressField.Update(msg)
 	return m, cmd
 }
 
+func createBannerMessage(text, bgColor, textColor, emoji string) string {
+	style := lipgloss.NewStyle().
+		Foreground(lipgloss.Color(textColor)). // Set text color dynamically
+		Background(lipgloss.Color(bgColor)).
+		PaddingTop(1).
+		PaddingLeft(1).
+		PaddingRight(1).
+		PaddingBottom(1).
+		Bold(true)
+	// Apply border to all sides
+
+	return style.Render(emoji + " " + text)
+}
+
 func (m *HomeScreenModel) View() string {
-	if m.size.Width < 150 || m.size.Height < 45 {
+	if m.size.Width < 150 || m.size.Height < 50 {
 		log.Logger.Errorf("Screen too small "+
 			"for application (height = %d, width = %d)", m.size.Height, m.size.Width)
 		return "Screen too small..."
@@ -151,9 +190,10 @@ func (m *HomeScreenModel) View() string {
 	content := lipgloss.JoinVertical(
 		lipgloss.Center,
 		BannerRendered(),
-		homeScreenStyle.InpFieldStyle.Render(m.addressField.View()),
+		homeScreenStyle.InpFieldStyle.Render(m.addressField.textInp.View()),
+		createEmptySpace((m.size.Height*50)/100),
+		createBannerMessage("Connection Successful!", "#2d6a4f", "#111d13", ""),
 		homeScreenStyle.HelpStyle.Render(m.help.View(m.keys)),
-		//applyStyle.Render(m.addressField.View()),
 	)
 
 	return lipgloss.Place(

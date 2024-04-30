@@ -1,6 +1,9 @@
 package app
 
-import "github.com/charmbracelet/lipgloss"
+import (
+	"github.com/charmbracelet/lipgloss"
+	"strings"
+)
 
 var (
 	homeScreenStyle *HomeScreenStyle
@@ -28,7 +31,7 @@ func newHomeScreenStyle(bannerProps *BannerStyleProperties) *HomeScreenStyle {
 	return &HomeScreenStyle{
 		InpFieldStyle: lipgloss.NewStyle(),
 		BannerStyle:   makeRampStyles(bannerProps),
-		HelpStyle:     lipgloss.NewStyle().PaddingTop(10),
+		HelpStyle:     lipgloss.NewStyle().PaddingTop(1),
 	}
 }
 
@@ -37,4 +40,8 @@ func (hss *HomeScreenStyle) AddInputFieldStyle(ifs *InputFieldStyle) {
 		BorderForeground(ifs.BorderColor).
 		BorderStyle(ifs.BorderStyle).
 		Padding(ifs.Padding).Width(ifs.Width)
+}
+
+func createEmptySpace(numLines int) string {
+	return strings.Repeat("\n", numLines)
 }
