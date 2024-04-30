@@ -3,4 +3,4 @@ An interactive TUI that powers your endeavour in ETCD
 
 ![example workflow](https://github.com/MayukhSobo/Spectacle/actions/workflows/go.yml/badge.svg)
 
-<img width="1804" alt="Screenshot 2024-04-12 at 10 26 40 PM" src="https://github.com/MayukhSobo/Spectacle/assets/8527634/2eed1088-ef3b-4996-8a5a-ca40311e3a3e">
+![Screenshot from 2024-05-01 01-19-11](https://github.com/MayukhSobo/Spectacle/assets/8527634/cc8d5116-6fa0-45e0-b26e-0f44c2a21b8f)
