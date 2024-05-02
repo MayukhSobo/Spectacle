@@ -1,13 +1,14 @@
 package app
 
 import (
+	"os"
+	"spectacle/log"
+
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"os"
-	"spectacle/log"
 )
 
 type keyMap struct {
@@ -110,6 +111,7 @@ func NewHomeScreenModel(defaultTextAddrField string) *HomeScreenModel {
 func DefaultInpStyle(wsize *WindowSize, frac int) *InputFieldStyle {
 	return &InputFieldStyle{
 		Width:       (wsize.Width * frac) / 100,
+		Height: 	 (wsize.Height * frac) / 100,
 		BorderColor: "#81b2b5",
 		BorderStyle: lipgloss.RoundedBorder(),
 		Padding:     1,
@@ -191,7 +193,7 @@ func (m *HomeScreenModel) View() string {
 		lipgloss.Center,
 		BannerRendered(),
 		homeScreenStyle.InpFieldStyle.Render(m.addressField.textInp.View()),
-		createEmptySpace((m.size.Height*50)/100),
+		// createEmptySpace((m.size.Height*50)/100),
 		createBannerMessage("Connection Successful!", "#2d6a4f", "#111d13", ""),
 		homeScreenStyle.HelpStyle.Render(m.help.View(m.keys)),
 	)

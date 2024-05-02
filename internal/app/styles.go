@@ -1,8 +1,9 @@
 package app
 
 import (
-	"github.com/charmbracelet/lipgloss"
 	"strings"
+
+	"github.com/charmbracelet/lipgloss"
 )
 
 var (
@@ -19,6 +20,7 @@ type InputFieldStyle struct {
 	BorderColor lipgloss.Color
 	Padding     int
 	Width       int // Make it 80% of the window size
+	Height 		int
 }
 
 type HomeScreenStyle struct {
@@ -39,7 +41,7 @@ func (hss *HomeScreenStyle) AddInputFieldStyle(ifs *InputFieldStyle) {
 	hss.InpFieldStyle = hss.InpFieldStyle.
 		BorderForeground(ifs.BorderColor).
 		BorderStyle(ifs.BorderStyle).
-		Padding(ifs.Padding).Width(ifs.Width)
+		Padding(ifs.Padding).Width(ifs.Width).MarginBottom(30)
 }
 
 func createEmptySpace(numLines int) string {
