@@ -21,11 +21,11 @@ func (m HomeScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			logger.Log.Debug("Received quit key to exit the application")
 			cmd = tea.Quit
 		case key.Matches(msg, m.Keys.Help):
-			m.Help.ShowAll = !m.Help.ShowAll
+			m.Help.model.ShowAll = !m.Help.model.ShowAll
 			cmd = tea.ClearScreen
-			// case key.Matches(msg, m.Keys.Connect):
-			// 	m.ShowTooltip = !m.ShowTooltip
-			// 	return m, tea.ClearScreen
+		case key.Matches(msg, m.Keys.Connect):
+			m.Tooltip.Active = !m.Tooltip.Active
+			cmd = tea.ClearScreen
 		}
 	}
 	return m, cmd

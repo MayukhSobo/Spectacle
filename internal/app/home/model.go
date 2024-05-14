@@ -28,12 +28,15 @@ type Input struct {
 	model       textinput.Model
 	inputStyle  lipgloss.Style
 	borderStyle lipgloss.Style
+	borderWidth int
 }
 
 type Tooltip struct {
-	Msg    string
-	Active bool
-	Alert  AlertType
+	Msg             string
+	Active          bool
+	Alert           AlertType
+	TooltipStyle    lipgloss.Style
+	BackgroundStyle lipgloss.Style
 	// Add tooltip style
 }
 
@@ -51,16 +54,28 @@ func newBanner(startCol, endCol string) *Banner {
 		BannerStatingColor: startCol,
 		BannerEndingColor:  endCol,
 	}
+}
 
+type Help struct {
+	model help.Model
+	style lipgloss.Style
+}
+
+func newHelp() *Help {
+	return &Help{
+		model: help.New(),
+	}
 }
 
 type HomeScreenModel struct {
+	// UI elements
 	Banner  *Banner
 	Tooltip *Tooltip
 	Input   *Input
-	Window  *Window
-	Keys    *keyMap
-	Help    help.Model
+	Help    *Help
+	// Management elements
+	Window *Window
+	Keys   *keyMap
 }
 
 func NewHomeScreenModel(defaultMsg string) HomeScreenModel {
@@ -69,8 +84,8 @@ func NewHomeScreenModel(defaultMsg string) HomeScreenModel {
 		Input:   newInput(defaultMsg),
 		Window:  newWindow(0, 0), // This doesn't mean window size is 0, 0
 		Keys:    newKeyMap(),
-		Help:    help.New(),
-		Tooltip: newTooltip(tootTipMsgGoodConn),
+		Help:    newHelp(),
+		Tooltip: newTooltip(false, GOOD_CONNECTION),
 	}
 }
 
@@ -81,11 +96,10 @@ func newWindow(height, width int) *Window {
 	}
 }
 
-func newTooltip(msg string) *Tooltip {
+func newTooltip(isActive bool, alert AlertType) *Tooltip {
 	return &Tooltip{
-		Msg:    msg,
-		Active: false,
-		Alert:  GOOD_CONNECTION,
+		Active: isActive,
+		Alert:  alert,
 	}
 }
 
