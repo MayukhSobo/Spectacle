@@ -1,16 +1,17 @@
-package log
+package logger
 
 import (
-	"github.com/sirupsen/logrus"
 	"os"
 	"path/filepath"
 	"runtime"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
-var Logger *logger
+var Log *Logger
 
-type logger struct {
+type Logger struct {
 	*logrus.Logger
 	Files map[string]*os.File
 }
@@ -34,7 +35,7 @@ func setLogLevel(logger *logrus.Logger, level string) {
 	}
 }
 
-func NewLogger(level string, enableColors bool) *logger {
+func NewLogger(level string, enableColors bool) *Logger {
 	baseLogger := logrus.New()
 	setLogLevel(baseLogger, level)
 	files := make(map[string]*os.File)
@@ -46,10 +47,10 @@ func NewLogger(level string, enableColors bool) *logger {
 		ForceColors:     enableColors,
 		TimestampFormat: time.RFC3339,
 	})
-	return &logger{baseLogger, files}
+	return &Logger{baseLogger, files}
 }
 
-func (l *logger) addContext(level string) *logrus.Entry {
+func (l *Logger) addContext(level string) *logrus.Entry {
 	pc, file, _, ok := runtime.Caller(2)
 	if !ok {
 		return l.WithFields(logrus.Fields{
@@ -66,27 +67,27 @@ func (l *logger) addContext(level string) *logrus.Entry {
 	return entry
 }
 
-func (l *logger) Info(msg string) {
+func (l *Logger) Info(msg string) {
 
 	l.addContext("info").Info(msg)
 }
 
-func (l *logger) Debug(msg string) {
+func (l *Logger) Debug(msg string) {
 	l.addContext("debug").Debug(msg)
 }
 
-func (l *logger) Error(msg string) {
+func (l *Logger) Error(msg string) {
 	l.addContext("error").Error(msg)
 }
 
-func (l *logger) Infof(format string, args ...interface{}) {
+func (l *Logger) Infof(format string, args ...interface{}) {
 	l.addContext("info").Infof(format, args...)
 }
 
-func (l *logger) Debugf(format string, args ...interface{}) {
+func (l *Logger) Debugf(format string, args ...interface{}) {
 	l.addContext("debug").Debugf(format, args...)
 }
 
-func (l *logger) Errorf(format string, args ...interface{}) {
+func (l *Logger) Errorf(format string, args ...interface{}) {
 	l.addContext("error").Errorf(format, args...)
 }

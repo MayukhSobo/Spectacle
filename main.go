@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 	"spectacle/cmd"
-	"spectacle/log"
+	"spectacle/logger"
 	"strings"
 )
 
@@ -24,13 +24,13 @@ func init() {
 	}
 	// By default, the color are not present
 	// and log level is debug
-	log.Logger = log.NewLogger(logLevel, ifColors)
-	log.Logger.Debugf("Started logging with colors: %v and logLevel %v", ifColors, logLevel)
+	logger.Log = logger.NewLogger(logLevel, ifColors)
+	logger.Log.Debugf("Started logging with colors: %v and logLevel %v", ifColors, logLevel)
 }
 
 func main() {
 	if err := cmd.Execute(); err != nil {
-		log.Logger.Errorf("%+v", err)
+		logger.Log.Errorf("%+v", err)
 		os.Exit(1)
 	}
 }
