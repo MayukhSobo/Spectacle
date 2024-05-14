@@ -42,6 +42,7 @@ type Banner struct {
 	BannerStatingColor string
 	BannerEndingColor  string
 	BannerStyle        lipgloss.Style
+	RenderedBanner     string
 }
 
 func newBanner(startCol, endCol string) *Banner {

@@ -1,11 +1,15 @@
 package home
 
-import "github.com/charmbracelet/lipgloss"
+import (
+	"github.com/charmbracelet/lipgloss"
+)
 
 func getStyledBanner(m *HomeScreenModel) string {
 	bannerModel := m.Banner
 	bannerModel.MakeStyle(m.Window)
-	return bannerModel.BannerStyle.Render(bannerModel.BannerText)
+	return bannerModel.BannerStyle.Render(
+		bannerModel.RenderedBanner,
+	)
 }
 
 func getStyledInput(m *HomeScreenModel) string {

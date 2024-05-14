@@ -45,11 +45,15 @@ func makeRampStyles(colorStart, colorEnd string, banner string) (s []lipgloss.St
 	return
 }
 
-func GradientBanner(startColor, endColor string, banner string) string {
+func GradientBanner(banner *Banner) string {
 	var bannerRendered string
-	for i, each := range makeRampStyles(startColor, endColor, banner) {
-		bannerRendered += each.Render(string(banner[i]))
+	for i, each := range makeRampStyles(
+		banner.BannerStatingColor,
+		banner.BannerEndingColor,
+		banner.BannerText,
+	) {
+		bannerRendered += each.Render(string(banner.BannerText[i]))
 	}
-	// bannerRendered += "\n"
+	bannerRendered += "\n"
 	return bannerRendered
 }

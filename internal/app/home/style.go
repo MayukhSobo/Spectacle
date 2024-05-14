@@ -17,10 +17,5 @@ func (i *Input) MakeStyle(w *Window) {
 func (b *Banner) MakeStyle(w *Window) {
 	centreStyle := lipgloss.NewStyle().Width(w.Width).Align(lipgloss.Center)
 	b.BannerStyle = centreStyle.PaddingTop(1)
-	gradientBanner := GradientBanner(
-		b.BannerStatingColor,
-		b.BannerEndingColor,
-		b.BannerText,
-	)
-	b.BannerText = gradientBanner
+	b.RenderedBanner = GradientBanner(b)
 }
