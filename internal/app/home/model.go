@@ -57,13 +57,15 @@ func newBanner(startCol, endCol string) *Banner {
 }
 
 type Help struct {
-	model help.Model
-	style lipgloss.Style
+	model    help.Model
+	style    lipgloss.Style
+	IsActive bool
 }
 
 func newHelp() *Help {
 	return &Help{
-		model: help.New(),
+		model:    help.New(),
+		IsActive: false,
 	}
 }
 

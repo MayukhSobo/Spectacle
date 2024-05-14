@@ -10,6 +10,7 @@ type keyMap struct {
 	Clear   key.Binding
 	Show    key.Binding
 	Help    key.Binding
+	Command key.Binding
 }
 
 func (k keyMap) ShortHelp() []key.Binding {
@@ -54,6 +55,10 @@ func newKeyMap() *keyMap {
 		Help: key.NewBinding(
 			key.WithKeys("?"),
 			key.WithHelp("?", "toggle help"),
+		),
+		Command: key.NewBinding(
+			key.WithKeys("tab"),
+			key.WithHelp("tab", "toggle command mode"),
 		),
 	}
 }
