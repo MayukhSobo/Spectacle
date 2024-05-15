@@ -1,7 +1,9 @@
 package home
 
 import (
+	"math/rand"
 	"os"
+	"spectacle/db"
 	"spectacle/logger"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -9,6 +11,11 @@ import (
 
 func (m HomeScreenModel) Init() tea.Cmd {
 	return nil
+}
+
+func ping(endpoint string, db *db.Database) (AlertType, error) {
+	values := []AlertType{GOOD_CONNECTION, NO_CONNECTION}
+	return values[rand.Intn(2)], nil
 }
 
 func Start() {

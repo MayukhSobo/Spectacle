@@ -18,7 +18,7 @@ func (m HomeScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, m.Keys.Command):
-			logger.Log.Debugf("Command key is pressed!")
+			logger.Log.Debugf("Command Mode!")
 			m.Help.IsActive = !m.Help.IsActive
 		}
 		if m.Help.IsActive {
@@ -31,6 +31,17 @@ func (m HomeScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				cmd = tea.ClearScreen
 			case key.Matches(msg, m.Keys.Connect):
 				m.Tooltip.Active = !m.Tooltip.Active
+				// Try to get the address from the input
+				address := m.Input.model.Value()
+				alert, err := ping(address, nil)
+				if err != nil {
+					logger.Log.Errorf("Encountered error: %+v", err)
+					break
+				}
+				m.Tooltip.Alert = alert
+				// Connect to the endpoint
+				// If success, m.Tooltip.Alert = GOOD_CONNECTION
+				// else m.Tooltip.Alert = NO_CONNECTION
 				cmd = tea.ClearScreen
 			case key.Matches(msg, m.Keys.Clear):
 				m.Input.model.SetValue("")
