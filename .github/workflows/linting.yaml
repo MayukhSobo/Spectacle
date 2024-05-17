@@ -36,13 +36,13 @@ jobs:
       - name: Run golangci-lint on PR
         if: github.event_name == 'pull_request'
         run: |
-          golangci-lint run --new-from-rev ${{ github.event.pull_request.base.sha }} --config .golangci.yaml --verbose
+          golangci-lint run --new-from-rev ${{ github.event.pull_request.base.sha }} --config .golangci.yaml
         continue-on-error: true
 
       - name: Run golangci-lint on main branch push
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
-          golangci-lint run --config .golangci.yaml --verbose
+          golangci-lint run --config .golangci.yaml
         continue-on-error: true
 
     #   - name: Display golangci-lint results
