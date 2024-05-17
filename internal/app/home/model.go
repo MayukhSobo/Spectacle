@@ -15,8 +15,8 @@ const (
 )
 
 const (
-	tootTipMsgGoodConn   = "✔ Connection Successful"
-	tootTipMsgFailedConn = "Connection Failed"
+	toolTipMsgGoodConn   = "Connection Successful :)"
+	toolTipMsgFailedConn = "Connection Failed!"
 )
 
 type Window struct {
