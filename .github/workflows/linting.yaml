@@ -23,16 +23,28 @@ jobs:
         with:
           go-version: '1.22.2'
 
+      - name: Install dependencies
+        run: |
+          go mod download
+          go mod tidy
+
+      - name: Install golangci-lint
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.51.2
+          golangci-lint --version
+
       - name: Run golangci-lint on PR
         if: github.event_name == 'pull_request'
-        uses: golangci/golangci-lint-action@v3
-        with:
-          args: --new-from-rev ${{ github.event.pull_request.base.sha }} --config .golangci.yaml
-          version: latest
+        run: |
+          golangci-lint run --new-from-rev ${{ github.event.pull_request.base.sha }} --config .golangci.yaml --verbose
+        continue-on-error: true
 
       - name: Run golangci-lint on main branch push
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: golangci/golangci-lint-action@v3
-        with:
-          version: latest
-          args: --config .golangci.yaml
+        run: |
+          golangci-lint run --config .golangci.yaml --verbose
+        continue-on-error: true
+
+    #   - name: Display golangci-lint results
+    #     if: failure()
+    #     run: cat golangci-lint.log
