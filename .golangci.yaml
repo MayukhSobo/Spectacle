@@ -11,3 +11,141 @@ run:
 output:
   formats:
   - format: colored-line-number
+
+  print-issued-lines: false # Print lines of code with issue.
+  print-linter-name: false # Print linter name in the end of issue text.
+  sort-results: true # Sort results by the order defined in `sort-order`.
+  sort-order: # filepath, line, and column.
+  - linter
+  - severity
+  - file
+  show-stats: true # Show statistics per linter.
+
+linters:
+  disable-all: true
+
+  enable:
+  # bugs/error
+  - staticcheck
+  - revive
+  - govet
+  - errcheck
+  - gosec
+  - dupl
+
+  # performance
+  - gocritic
+  - prealloc
+
+  # style, formatting
+  - stylecheck
+  - staticcheck
+  - goconst
+  - gofmt
+  - tagliatelle
+  - decorder
+  - lll
+
+  # Code complexity
+  - cyclop
+
+linters-settings:
+
+  # Error check settings
+  errcheck:
+    # Report about not checking of errors
+    check-type-assertions: true # type assertions: `a := b.(MyStruct)`
+    check-blank: true # `num, _ := strconv.Atoi(numStr)`
+
+  # Gofmt settings
+  gofmt:
+    simplify: false
+    rewrite-rules:
+    - pattern: 'interface{}'
+      replacement: 'any'
+    - pattern: 'a[b:len(a)]'
+      replacement: 'a[b:]'
+
+  copyloopvar:
+    # Linting error to assign a loop variable into another
+    check-alias: true
+
+  # Code complexity settings
+  cyclop:
+    # The maximal code complexity to report.
+    # Default: 10
+    max-complexity: 10
+    # The maximal average package complexity.
+    # If it's higher than 0.0 (float) the check is enabled
+    # Default: 0.0
+    package-average: 0.5
+    # Should ignore tests.
+    # Default: false
+    skip-tests: false
+
+  # Code organisation
+  decorder:
+    # Required order of `type`, `const`, `var` and `func` declarations inside a file.
+    # Default: types before constants before variables before functions.
+    dec-order:
+    - type
+    - const
+    - var
+    - func
+
+    ignore-underscore-vars: false # Allow variables with underscore
+    disable-dec-order-check: false # Disable order of declaration
+    disable-dec-num-check: false # Multiple declaration of `type`, `var` and `const` not allowed
+
+  # Golang security settings
+  gosec:
+    # To select a subset of rules to run.
+    # Available rules: https://github.com/securego/gosec#available-rules
+    # Default: [] - means include all rules
+    includes:
+    - G101 # Look for hard coded credentials
+    - G102 # Bind to all interfaces
+    - G103 # Audit the use of unsafe block
+    - G104 # Audit errors not checked
+    - G106 # Audit the use of ssh.InsecureIgnoreHostKey
+    - G107 # Url provided to HTTP request as taint input
+    - G108 # Profiling endpoint automatically exposed on /debug/pprof
+    - G109 # Potential Integer overflow made by strconv.Atoi result conversion to int16/32
+    - G110 # Potential DoS vulnerability via decompression bomb
+    - G111 # Potential directory traversal
+    - G112 # Potential slowloris attack
+    - G113 # Usage of Rat.SetString in math/big with an overflow (CVE-2022-23772)
+    - G114 # Use of net/http serve function that has no support for setting timeouts
+    - G201 # SQL query construction using format string
+    - G202 # SQL query construction using string concatenation
+    - G203 # Use of unescaped data in HTML templates
+    - G204 # Audit use of command execution
+    - G301 # Poor file permissions used when creating a directory
+    - G302 # Poor file permissions used with chmod
+    - G303 # Creating tempfile using a predictable path
+    - G304 # File path provided as taint input
+    - G305 # File traversal when extracting zip/tar archive
+    - G306 # Poor file permissions used when writing to a new file
+    - G307 # Poor file permissions used when creating a file with os.Create
+    - G401 # Detect the usage of DES, RC4, MD5 or SHA1
+    - G402 # Look for bad TLS connection settings
+    - G403 # Ensure minimum RSA key length of 2048 bits
+    - G404 # Insecure random number source (rand)
+    - G601 # Implicit memory aliasing of items from a range statement
+    - G602 # Slice access out of bounds
+
+
+  revive:
+    # Maximum number of open files at the same time.
+    # See https://github.com/mgechev/revive#command-line-flags
+    # Defaults to unlimited.
+    max-open-files: 2048
+
+  lll:
+    line-length: 120
+    tab-width: 1
+
+  staticcheck:
+    # SAxxxx checks in https://staticcheck.io/docs/configuration/options/#checks
+    # Default: ["*"]
+    checks: ["all"]

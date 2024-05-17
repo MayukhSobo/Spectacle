@@ -27,7 +27,7 @@ jobs:
         if: github.event_name == 'pull_request'
         uses: golangci/golangci-lint-action@v3
         with:
-          args: --new-from-rev ${{ github.event.pull_request.base.sha }}
+          args: --new-from-rev ${{ github.event.pull_request.base.sha }} --config .golangci.yaml
           version: latest
 
       - name: Run golangci-lint on main branch push
@@ -35,3 +35,4 @@ jobs:
         uses: golangci/golangci-lint-action@v3
         with:
           version: latest
+          args: --config .golangci.yaml
