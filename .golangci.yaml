@@ -1,0 +1,13 @@
+# Reference: https://github.com/golangci/golangci-lint/blob/master/.golangci.reference.yml
+run:
+  concurrency: 4
+  timeout: 10m # Timeout for analysis
+  issues-exit-code: 2 # Exit code when at least one issue was found.
+  tests: true # Include test files or not
+  modules-download-mode: readonly # Don't update the go.mod file
+  allow-parallel-runners: true
+  allow-serial-runners: true
+  go: '1.19'
+output:
+  formats:
+  - format: colored-line-number
