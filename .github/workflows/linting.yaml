@@ -1,4 +1,4 @@
-name: Go Lint CI
+name: Linting
 on:
   push:
     branches:
