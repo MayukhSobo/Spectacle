@@ -12,6 +12,9 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
 
+    env:
+      GOLANGCI_LINT_VERSION: v1.58.1
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -28,23 +31,16 @@ jobs:
           go mod download
           go mod tidy
 
-      - name: Install golangci-lint
-        run: |
-          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.58.1
-          golangci-lint --version
-
       - name: Run golangci-lint on PR
         if: github.event_name == 'pull_request'
-        run: |
-          golangci-lint run --new-from-rev ${{ github.event.pull_request.base.sha }} --config .golangci.yaml
-        continue-on-error: true
+        uses: golangci/golangci-lint-action@v3
+        with:
+          args: --new-from-rev ${{ github.event.pull_request.base.sha }} --config .golangci.yaml
+          version: ${{ env.GOLANGCI_LINT_VERSION }}
 
       - name: Run golangci-lint on main branch push
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: |
-          golangci-lint run --config .golangci.yaml
-        continue-on-error: true
-
-    #   - name: Display golangci-lint results
-    #     if: failure()
-    #     run: cat golangci-lint.log
+        uses: golangci/golangci-lint-action@v3
+        with:
+          args: --config .golangci.yaml
+          version: ${{ env.GOLANGCI_LINT_VERSION }}
