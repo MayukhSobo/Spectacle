@@ -35,8 +35,14 @@ func colorToHex(c colorful.Color) string {
 }
 
 func makeRampStyles(colorStart, colorEnd string, banner string) (s []lipgloss.Style) {
-	cA, _ := colorful.Hex(colorStart)
-	cB, _ := colorful.Hex(colorEnd)
+	cA, err := colorful.Hex(colorStart)
+	if err != nil {
+		panic(err)
+	}
+	cB, err := colorful.Hex(colorEnd)
+	if err != nil {
+		panic(err)
+	}
 	steps := float64(len(banner))
 	for i := 0.0; i < steps; i++ {
 		c := cA.BlendLuv(cB, i/steps)

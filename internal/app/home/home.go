@@ -16,7 +16,7 @@ func (m HomeScreenModel) Init() tea.Cmd {
 func ping(endpoint string, db *db.Database) (AlertType, error) {
 	_ = endpoint
 	_ = db
-	values := []AlertType{GOOD_CONNECTION, NO_CONNECTION}
+	values := []AlertType{goodConnection, noConnection}
 	return values[rand.Intn(2)], nil
 }
 

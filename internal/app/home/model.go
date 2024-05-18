@@ -6,47 +6,57 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-type AlertType int
-
-const (
-	NO_CONNECTION AlertType = iota + 1
-	GOOD_CONNECTION
-	PENDING_CONNECTION
+type (
+	AlertType int
+	Window    struct {
+		Height int
+		Width  int
+	}
+	Input struct {
+		model       textinput.Model
+		inputStyle  lipgloss.Style
+		borderStyle lipgloss.Style
+		borderWidth int
+	}
+	Tooltip struct {
+		Msg             string
+		Active          bool
+		Alert           AlertType
+		TooltipStyle    lipgloss.Style
+		BackgroundStyle lipgloss.Style
+		// Add tooltip style
+	}
+	Banner struct {
+		BannerText         string
+		BannerStatingColor string
+		BannerEndingColor  string
+		BannerStyle        lipgloss.Style
+		RenderedBanner     string
+	}
+	Help struct {
+		model    help.Model
+		style    lipgloss.Style
+		IsActive bool
+	}
+	HomeScreenModel struct {
+		// UI elements
+		Banner  *Banner
+		Tooltip *Tooltip
+		Input   *Input
+		Help    *Help
+		// Management elements
+		Window *Window
+		Keys   *keyMap
+	}
 )
 
 const (
+	noConnection AlertType = iota + 1
+	goodConnection
+	pendingConnection
 	toolTipMsgGoodConn   = "Connection Successful :)"
 	toolTipMsgFailedConn = "Connection Failed!"
 )
-
-type Window struct {
-	Height int
-	Width  int
-}
-
-type Input struct {
-	model       textinput.Model
-	inputStyle  lipgloss.Style
-	borderStyle lipgloss.Style
-	borderWidth int
-}
-
-type Tooltip struct {
-	Msg             string
-	Active          bool
-	Alert           AlertType
-	TooltipStyle    lipgloss.Style
-	BackgroundStyle lipgloss.Style
-	// Add tooltip style
-}
-
-type Banner struct {
-	BannerText         string
-	BannerStatingColor string
-	BannerEndingColor  string
-	BannerStyle        lipgloss.Style
-	RenderedBanner     string
-}
 
 func newBanner(startCol, endCol string) *Banner {
 	return &Banner{
@@ -56,28 +66,11 @@ func newBanner(startCol, endCol string) *Banner {
 	}
 }
 
-type Help struct {
-	model    help.Model
-	style    lipgloss.Style
-	IsActive bool
-}
-
 func newHelp() *Help {
 	return &Help{
 		model:    help.New(),
 		IsActive: false,
 	}
-}
-
-type HomeScreenModel struct {
-	// UI elements
-	Banner  *Banner
-	Tooltip *Tooltip
-	Input   *Input
-	Help    *Help
-	// Management elements
-	Window *Window
-	Keys   *keyMap
 }
 
 func NewHomeScreenModel(defaultMsg string) HomeScreenModel {
@@ -87,7 +80,7 @@ func NewHomeScreenModel(defaultMsg string) HomeScreenModel {
 		Window:  newWindow(0, 0), // This doesn't mean window size is 0, 0
 		Keys:    newKeyMap(),
 		Help:    newHelp(),
-		Tooltip: newTooltip(false, GOOD_CONNECTION),
+		Tooltip: newTooltip(false, goodConnection),
 	}
 }
 

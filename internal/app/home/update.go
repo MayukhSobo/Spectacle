@@ -16,8 +16,7 @@ func (m HomeScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		cmd = tea.ClearScreen
 		logger.Log.Debugf("Height: %d, Width: %d", msg.Height, msg.Width)
 	case tea.KeyMsg:
-		switch {
-		case key.Matches(msg, m.Keys.Command):
+		if key.Matches(msg, m.Keys.Command) {
 			logger.Log.Debugf("Command Mode!")
 			m.Help.IsActive = !m.Help.IsActive
 		}

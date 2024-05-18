@@ -34,11 +34,11 @@ func (t *Tooltip) MakeStyle(w *Window, in *Input) {
 	var backgroundColor lipgloss.AdaptiveColor
 	var foregroundColor lipgloss.AdaptiveColor
 	switch t.Alert {
-	case GOOD_CONNECTION:
+	case goodConnection:
 		backgroundColor = lipgloss.AdaptiveColor{Light: "#2E5930", Dark: "#13543C"}
 		foregroundColor = lipgloss.AdaptiveColor{Light: "#FFFFFF", Dark: "#FFFFFF"}
 		t.Msg = toolTipMsgGoodConn
-	case NO_CONNECTION:
+	case noConnection:
 		backgroundColor = lipgloss.AdaptiveColor{Light: "#7F1A1A", Dark: "#CC1B6B"}
 		foregroundColor = lipgloss.AdaptiveColor{Light: "#FFFFFF", Dark: "#FFFFFF"}
 		t.Msg = toolTipMsgFailedConn
