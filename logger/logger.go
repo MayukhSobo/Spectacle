@@ -9,12 +9,12 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var Log *Logger
-
 type Logger struct {
 	*logrus.Logger
 	Files map[string]*os.File
 }
+
+var Log *Logger
 
 func openLogFile(path string) *os.File {
 	file, err := os.OpenFile(path, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
@@ -80,14 +80,14 @@ func (l *Logger) Error(msg string) {
 	l.addContext("error").Error(msg)
 }
 
-func (l *Logger) Infof(format string, args ...interface{}) {
+func (l *Logger) Infof(format string, args ...any) {
 	l.addContext("info").Infof(format, args...)
 }
 
-func (l *Logger) Debugf(format string, args ...interface{}) {
+func (l *Logger) Debugf(format string, args ...any) {
 	l.addContext("debug").Debugf(format, args...)
 }
 
-func (l *Logger) Errorf(format string, args ...interface{}) {
+func (l *Logger) Errorf(format string, args ...any) {
 	l.addContext("error").Errorf(format, args...)
 }
