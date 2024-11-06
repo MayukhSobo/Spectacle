@@ -14,7 +14,7 @@ type keyMap struct {
 }
 
 func (k keyMap) ShortHelp() []key.Binding {
-	return []key.Binding{k.Help, k.Quit, k.Connect}
+	return []key.Binding{k.Help, k.Quit, k.Connect, k.Command}
 }
 
 // FullHelp returns keybindings for the expanded help view. It's part of the
@@ -58,7 +58,7 @@ func newKeyMap() *keyMap {
 		),
 		Command: key.NewBinding(
 			key.WithKeys("tab"),
-			key.WithHelp("tab", "toggle command mode"),
+			key.WithHelp("tab", "toggle mode"),
 		),
 	}
 }

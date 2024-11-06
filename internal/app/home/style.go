@@ -48,3 +48,33 @@ func (t *Tooltip) MakeStyle(w *Window, in *Input) {
 		Bold(true).Padding(1).Align(lipgloss.Center).Width(tooltipWidth)
 	t.TooltipStyle = lipgloss.NewStyle().Width(w.Width).Align(lipgloss.Center)
 }
+
+func EditModeStyle() lipgloss.Style {
+	return lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#000000")). // Black text
+		Background(lipgloss.Color("#FFFFFF")). // White background
+		Bold(true).
+		Align(lipgloss.Center).
+		Width(20).    // Set a fixed width for the mode indicator
+		Padding(0, 2) // Add horizontal padding to enhance the pill shape
+}
+
+func CommandModeStyle() lipgloss.Style {
+	return lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#FFFFFF")). // White text
+		Background(lipgloss.Color("#457B9D")). // Darker blue background
+		Bold(true).
+		Align(lipgloss.Center).
+		Width(20).    // Set a fixed width for the mode indicator
+		Padding(0, 2) // Add horizontal padding to enhance the pill shape
+}
+
+func CenteredStyle(windowWidth int) lipgloss.Style {
+	return lipgloss.NewStyle().
+		Width(windowWidth).
+		Align(lipgloss.Center)
+}
+
+func SpacerStyle() lipgloss.Style {
+	return lipgloss.NewStyle().Height(1)
+}

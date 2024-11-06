@@ -45,6 +45,22 @@ func Spacer(w *Window, banner, input, tooltip, help string) string {
 	return lipgloss.NewStyle().Height(gapHeight - 1).Render("")
 }
 
+func getModeIndicator(m *HomeScreenModel) string {
+	var mode string
+	var modeStyle lipgloss.Style
+
+	if m.Help.IsActive {
+		mode = "Command Mode"
+		modeStyle = CommandModeStyle()
+	} else {
+		mode = "Edit Mode"
+		modeStyle = EditModeStyle()
+	}
+
+	// Center the mode indicator within the full window width
+	return CenteredStyle(m.Window.Width).Render(modeStyle.Render(mode))
+}
+
 func (m HomeScreenModel) View() string {
 	// Get the banner model and apply its style
 	banner := getStyledBanner(&m)
@@ -54,12 +70,20 @@ func (m HomeScreenModel) View() string {
 	input := getStyledInput(&m)
 	// Get the help model and apply its style
 	help := getStyledHelp(&m)
+	// Get the mode indicator
+	modeIndicator := getModeIndicator(&m)
+
+	// Create a spacer for gap using the style from style.go
+	spacer := SpacerStyle().Render("")
+
 	return lipgloss.JoinVertical(
 		lipgloss.Top,
 		banner,
 		tooltip,
 		input,
 		Spacer(m.Window, banner, input, tooltip, help),
+		modeIndicator, // Center the mode indicator
+		spacer,        // Add a spacer for gap
 		help,
 	)
 }

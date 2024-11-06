@@ -2,9 +2,10 @@ package main
 
 import (
 	"os"
+	"strings"
+
 	"spectacle/cmd"
 	"spectacle/logger"
-	"strings"
 )
 
 func init() {
