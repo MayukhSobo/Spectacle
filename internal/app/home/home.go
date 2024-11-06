@@ -1,7 +1,8 @@
 package home
 
 import (
-	"math/rand"
+	"crypto/rand"
+	"math/big"
 	"os"
 	"spectacle/db"
 	"spectacle/logger"
@@ -17,7 +18,11 @@ func ping(endpoint string, db *db.Database) (AlertType, error) {
 	_ = endpoint
 	_ = db
 	values := []AlertType{goodConnection, noConnection}
-	return values[rand.Intn(2)], nil
+	n, err := rand.Int(rand.Reader, big.NewInt(int64(len(values))))
+	if err != nil {
+		return noConnection, err
+	}
+	return values[n.Int64()], nil
 }
 
 func Start() {
