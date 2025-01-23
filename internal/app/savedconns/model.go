@@ -1,6 +1,8 @@
 package savedconns
 
 import (
+	"spectacle/internal/app/common"
+
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/list"
 )
@@ -12,15 +14,11 @@ type (
 		URI      string
 		Selected bool
 	}
-	Window struct {
-		Height int
-		Width  int
-	}
 
 	SavedConnModel struct {
 		connections []Connection
 		list        list.Model
-		Window      *Window
+		Window      *common.Window
 		keys        *KeyMap
 		help        help.Model
 	}
@@ -39,7 +37,7 @@ func NewSavedConnModel() SavedConnModel {
 	return SavedConnModel{
 		connections: make([]Connection, 0),
 		list:        list,
-		Window:      &Window{},
+		Window:      common.NewWindow(0, 0),
 		keys:        keys,
 		help:        help.New(),
 	}

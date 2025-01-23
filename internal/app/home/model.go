@@ -1,6 +1,8 @@
 package home
 
 import (
+	"spectacle/internal/app/common"
+
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/textinput"
 	"github.com/charmbracelet/lipgloss"
@@ -8,11 +10,7 @@ import (
 
 type (
 	AlertType int
-	Window    struct {
-		Height int
-		Width  int
-	}
-	Input struct {
+	Input     struct {
 		model       textinput.Model
 		inputStyle  lipgloss.Style
 		borderStyle lipgloss.Style
@@ -45,7 +43,7 @@ type (
 		Input   *Input
 		Help    *Help
 		// Management elements
-		Window *Window
+		Window *common.Window
 		Keys   *keyMap
 	}
 )
@@ -77,17 +75,10 @@ func NewHomeScreenModel(defaultMsg string) HomeScreenModel {
 	return HomeScreenModel{
 		Banner:  newBanner("#B14FFF", "#00FFA3"),
 		Input:   newInput(defaultMsg),
-		Window:  newWindow(0, 0), // This doesn't mean window size is 0, 0
+		Window:  common.NewWindow(0, 0), // This doesn't mean window size is 0, 0
 		Keys:    newKeyMap(),
 		Help:    newHelp(),
 		Tooltip: newTooltip(false, goodConnection),
-	}
-}
-
-func newWindow(height, width int) *Window {
-	return &Window{
-		Height: height,
-		Width:  width,
 	}
 }
 

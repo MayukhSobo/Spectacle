@@ -1,10 +1,12 @@
 package home
 
 import (
+	"spectacle/internal/app/common"
+
 	"github.com/charmbracelet/lipgloss"
 )
 
-func (i *Input) MakeStyle(w *Window) {
+func (i *Input) MakeStyle(w *common.Window) {
 	centreStyle := lipgloss.NewStyle().Width(w.Width).Align(lipgloss.Center)
 	padding := w.Width / 10 // This creates padding of 10% of the total width on each side
 	borderWidth := w.Width - 2*padding
@@ -15,19 +17,19 @@ func (i *Input) MakeStyle(w *Window) {
 	i.borderWidth = borderWidth
 }
 
-func (b *Banner) MakeStyle(w *Window) {
+func (b *Banner) MakeStyle(w *common.Window) {
 	centreStyle := lipgloss.NewStyle().Width(w.Width).Align(lipgloss.Center)
 	b.BannerStyle = centreStyle.PaddingTop(1)
 	b.RenderedBanner = GradientBanner(b)
 }
 
-func (h *Help) MakeStyle(w *Window) {
+func (h *Help) MakeStyle(w *common.Window) {
 	h.style = lipgloss.NewStyle().
 		Align(lipgloss.Center).
 		Width(w.Width)
 }
 
-func (t *Tooltip) MakeStyle(w *Window, in *Input) {
+func (t *Tooltip) MakeStyle(w *common.Window, in *Input) {
 	borderWidth := in.borderWidth
 	tooltipPadding := borderWidth / 10
 	tooltipWidth := borderWidth - 7*tooltipPadding

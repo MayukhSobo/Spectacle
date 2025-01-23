@@ -1,10 +1,14 @@
 package home
 
 import (
+	"spectacle/internal/app/common"
+	"spectacle/logger"
+
 	"github.com/charmbracelet/lipgloss"
 )
 
-func getStyledBanner(m *HomeScreenModel) string {
+func getStyledBanner(m HomeScreenModel) string {
+	logger.Log.Debugf("getStyledBanner is called with window width: %d\n", m.Window.Width)
 	bannerModel := m.Banner
 	bannerModel.MakeStyle(m.Window)
 	return bannerModel.BannerStyle.Render(
@@ -12,7 +16,7 @@ func getStyledBanner(m *HomeScreenModel) string {
 	)
 }
 
-func getStyledInput(m *HomeScreenModel) string {
+func getStyledInput(m HomeScreenModel) string {
 	inputModel := m.Input
 	inputModel.MakeStyle(m.Window)
 	return inputModel.inputStyle.Render(inputModel.borderStyle.Render(
@@ -20,13 +24,13 @@ func getStyledInput(m *HomeScreenModel) string {
 	))
 }
 
-func getStyledHelp(m *HomeScreenModel) string {
+func getStyledHelp(m HomeScreenModel) string {
 	helpModel := m.Help
 	helpModel.MakeStyle(m.Window)
 	return helpModel.style.Render(m.Help.model.View(m.Keys))
 }
 
-func getStyledTooltip(m *HomeScreenModel) string {
+func getStyledTooltip(m HomeScreenModel) string {
 	tooltipModel := m.Tooltip
 	inputModel := m.Input
 	tooltipModel.MakeStyle(m.Window, inputModel)
@@ -37,7 +41,7 @@ func getStyledTooltip(m *HomeScreenModel) string {
 	return ""
 }
 
-func Spacer(w *Window, banner, input, tooltip, help string) string {
+func Spacer(w *common.Window, banner, input, tooltip, help string) string {
 	totalHeight := lipgloss.Height(banner) +
 		lipgloss.Height(input) +
 		lipgloss.Height(tooltip)
@@ -45,7 +49,7 @@ func Spacer(w *Window, banner, input, tooltip, help string) string {
 	return lipgloss.NewStyle().Height(gapHeight - 1).Render("")
 }
 
-func getModeIndicator(m *HomeScreenModel) string {
+func getModeIndicator(m HomeScreenModel) string {
 	var mode string
 	var modeStyle lipgloss.Style
 
@@ -63,15 +67,15 @@ func getModeIndicator(m *HomeScreenModel) string {
 
 func (m HomeScreenModel) View() string {
 	// Get the banner model and apply its style
-	banner := getStyledBanner(&m)
+	banner := getStyledBanner(m)
 	// Get the tooltip model and apply its style
-	tooltip := getStyledTooltip(&m)
+	tooltip := getStyledTooltip(m)
 	// Get the input model and apply its style
-	input := getStyledInput(&m)
+	input := getStyledInput(m)
 	// Get the help model and apply its style
-	help := getStyledHelp(&m)
+	help := getStyledHelp(m)
 	// Get the mode indicator
-	modeIndicator := getModeIndicator(&m)
+	modeIndicator := getModeIndicator(m)
 
 	// Create a spacer for gap using the style from style.go
 	spacer := SpacerStyle().Render("")
