@@ -1,4 +1,4 @@
-# Spectacle 🔎
+# Spectacle 👓
 An interactive TUI that powers your endeavour in ETCD
 
 ![example workflow](https://github.com/MayukhSobo/Spectacle/actions/workflows/go.yml/badge.svg)
