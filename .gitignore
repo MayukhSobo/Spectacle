@@ -3,3 +3,4 @@ vendor
 *.code-workspace
 spectacle*
 /.idea/*
+.cursorrules
