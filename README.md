@@ -1,7 +1,7 @@
 # Spectacle 👓
 An interactive TUI that powers your endeavour in ETCD
 
-[![Build Status](https://github.com/MayukhSobo/Spectacle/actions/workflows/go.yml/badge.svg)](https://github.com/MayukhSobo/Spectacle/actions)
+[![Build Status](https://github.com/MayukhSobo/Spectacle/actions/workflows/build.yml/badge.svg)](https://github.com/MayukhSobo/Spectacle/actions)
 [![Go Report Card](https://goreportcard.com/badge/github.com/MayukhSobo/Spectacle)](https://goreportcard.com/report/github.com/MayukhSobo/Spectacle)
 [![GoDoc](https://godoc.org/github.com/MayukhSobo/Spectacle?status.svg)](https://godoc.org/github.com/MayukhSobo/Spectacle)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
