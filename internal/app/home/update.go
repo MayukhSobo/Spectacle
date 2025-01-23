@@ -7,6 +7,11 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
+type ShowSavedConnsMsg struct{}
+
+// Define a message type for navigation
+type NavigateToSavedConns struct{}
+
 func (m HomeScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd = nil
 	switch msg := msg.(type) {
@@ -45,6 +50,10 @@ func (m HomeScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			case key.Matches(msg, m.Keys.Clear):
 				m.Input.model.SetValue("")
 				cmd = tea.ClearScreen
+			case key.Matches(msg, m.Keys.Show):
+				return m, func() tea.Msg {
+					return NavigateToSavedConns{}
+				}
 			}
 		} else {
 			m.Input.model, cmd = m.Input.model.Update(msg)

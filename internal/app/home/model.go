@@ -105,3 +105,12 @@ func newInput(defaultText string) *Input {
 	input.model.Focus()
 	return input
 }
+
+// InitializeStyles sets up all the styles for the home screen
+func (m *HomeScreenModel) InitializeStyles() {
+	// Initialize all component styles
+	m.Banner.MakeStyle(m.Window)
+	m.Input.MakeStyle(m.Window)
+	m.Help.MakeStyle(m.Window)
+	m.Tooltip.MakeStyle(m.Window, m.Input)
+}
