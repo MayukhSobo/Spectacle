@@ -2,13 +2,16 @@
 An interactive TUI that powers your endeavour in ETCD
 
 [![Build Status](https://github.com/MayukhSobo/Spectacle/actions/workflows/build.yml/badge.svg)](https://github.com/MayukhSobo/Spectacle/actions)
+[![Lint Status](https://github.com/MayukhSobo/Spectacle/actions/workflows/linting.yaml/badge.svg)](https://github.com/MayukhSobo/Spectacle/actions)
 [![Go Report Card](https://goreportcard.com/badge/github.com/MayukhSobo/Spectacle)](https://goreportcard.com/report/github.com/MayukhSobo/Spectacle)
 [![GoDoc](https://godoc.org/github.com/MayukhSobo/Spectacle?status.svg)](https://godoc.org/github.com/MayukhSobo/Spectacle)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Go Version](https://img.shields.io/github/go-mod/go-version/MayukhSobo/Spectacle)](https://go.dev/)
 [![Release](https://img.shields.io/github/v/release/MayukhSobo/Spectacle)](https://github.com/MayukhSobo/Spectacle/releases)
 
-<img width="1356" alt="Landing Image" src="https://github.com/MayukhSobo/Spectacle/assets/8527634/fe624af8-c63c-49e4-b73c-702f068a29aa">
+<p align="center">
+  <img width="200" alt="Spectacle Logo" src="assets/logo.png">
+</p>
 
 ## ✨ Features
 
