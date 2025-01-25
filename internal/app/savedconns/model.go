@@ -8,6 +8,9 @@ import (
 )
 
 type (
+	// Connection represents a saved database connection configuration
+	// with name, type, URI, and selection state. Used for both display
+	// and connection management.
 	Connection struct {
 		Name     string
 		Type     string // e.g., "etcd", "redis", "postgres"
@@ -15,6 +18,8 @@ type (
 		Selected bool
 	}
 
+	// SavedConnModel manages the UI state for interacting with saved connections.
+	// Handles list rendering, selection, and navigation between connections.
 	SavedConnModel struct {
 		connections []Connection
 		list        list.Model
@@ -26,7 +31,8 @@ type (
 	connectionItem Connection
 )
 
-// New creates a new saved connections model
+// NewSavedConnModel creates a new saved connections model with default values.
+// Initializes empty connection list and sets up UI components.
 func NewSavedConnModel() SavedConnModel {
 	keys := newKeyMap()
 	delegate := list.NewDefaultDelegate()

@@ -51,6 +51,9 @@ func makeRampStyles(colorStart, colorEnd string, banner string) (s []lipgloss.St
 	return
 }
 
+// GradientBanner generates a color gradient banner text display.
+// Takes a Banner struct and returns the rendered string with color transition
+// from starting color to ending color across the banner text.
 func GradientBanner(banner *Banner) string {
 	var bannerRendered string
 	for i, each := range makeRampStyles(

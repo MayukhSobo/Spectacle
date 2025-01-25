@@ -7,7 +7,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-func getStyledBanner(m HomeScreenModel) string {
+func getStyledBanner(m ScreenModel) string {
 	logger.Log.Debugf("getStyledBanner is called with window width: %d\n", m.Window.Width)
 	bannerModel := m.Banner
 	bannerModel.MakeStyle(m.Window)
@@ -16,7 +16,7 @@ func getStyledBanner(m HomeScreenModel) string {
 	)
 }
 
-func getStyledInput(m HomeScreenModel) string {
+func getStyledInput(m ScreenModel) string {
 	inputModel := m.Input
 	inputModel.MakeStyle(m.Window)
 	return inputModel.inputStyle.Render(inputModel.borderStyle.Render(
@@ -24,7 +24,7 @@ func getStyledInput(m HomeScreenModel) string {
 	))
 }
 
-func getStyledHelp(m HomeScreenModel) string {
+func getStyledHelp(m ScreenModel) string {
 	helpModel := m.Help
 	helpModel.MakeStyle(m.Window)
 
@@ -37,7 +37,7 @@ func getStyledHelp(m HomeScreenModel) string {
 	return helpModel.style.Render(m.Help.model.View(m.Keys))
 }
 
-func getStyledTooltip(m HomeScreenModel) string {
+func getStyledTooltip(m ScreenModel) string {
 	tooltipModel := m.Tooltip
 	inputModel := m.Input
 	tooltipModel.MakeStyle(m.Window, inputModel)
@@ -48,6 +48,8 @@ func getStyledTooltip(m HomeScreenModel) string {
 	return ""
 }
 
+// Spacer creates vertical spacing between UI components.
+// Returns a string with the specified number of newlines.
 func Spacer(w *common.Window, banner, input, tooltip, help string) string {
 	totalHeight := lipgloss.Height(banner) +
 		lipgloss.Height(input) +
@@ -56,7 +58,7 @@ func Spacer(w *common.Window, banner, input, tooltip, help string) string {
 	return lipgloss.NewStyle().Height(gapHeight - 1).Render("")
 }
 
-func getModeIndicator(m HomeScreenModel) string {
+func getModeIndicator(m ScreenModel) string {
 	var mode string
 	var modeStyle lipgloss.Style
 
@@ -72,7 +74,10 @@ func getModeIndicator(m HomeScreenModel) string {
 	return CenteredStyle(m.Window.Width).Render(modeStyle.Render(mode))
 }
 
-func (m HomeScreenModel) View() string {
+// View renders the complete home screen UI.
+// Combines banner, input field, tooltip, and help components.
+// Part of tea.Model interface implementation.
+func (m ScreenModel) View() string {
 	// Get the banner model and apply its style
 	banner := getStyledBanner(m)
 	// Get the tooltip model and apply its style

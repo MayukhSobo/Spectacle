@@ -8,13 +8,18 @@ import (
 )
 
 type (
+	// ShowSavedConnsMsg signals the application to display
+	// the saved connections view. Used for navigation between screens.
 	ShowSavedConnsMsg struct{}
 
-	// Define a message type for navigation
+	// NavigateToSavedConns defines a message type for navigation
 	NavigateToSavedConns struct{}
 )
 
-func (m HomeScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+// Update handles all state changes and user interactions for the home screen.
+// Processes keyboard events, manages help visibility, and handles navigation.
+// Part of tea.Model interface implementation.
+func (m ScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd = nil
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:

@@ -8,7 +8,10 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-func (m HomeScreenModel) Init() tea.Cmd {
+// Init initializes the home screen model.
+// Implements tea.Model interface for Bubble Tea initialization.
+// Returns nil command as no initial async operations are needed.
+func (m ScreenModel) Init() tea.Cmd {
 	return nil
 }
 

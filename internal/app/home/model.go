@@ -9,13 +9,18 @@ import (
 )
 
 type (
+	// AlertType is an enum for the different types of alerts while connecting to a database
 	AlertType int
-	Input     struct {
+
+	// Input is a struct for the input field in the home screen
+	Input struct {
 		model       textinput.Model
 		inputStyle  lipgloss.Style
 		borderStyle lipgloss.Style
 		borderWidth int
 	}
+
+	// Tooltip is a struct for the tooltip in the home screen
 	Tooltip struct {
 		Msg             string
 		Active          bool
@@ -24,6 +29,8 @@ type (
 		BackgroundStyle lipgloss.Style
 		// Add tooltip style
 	}
+
+	// Banner is a struct for the banner in the home screen that displays Spectacle in a gradient style
 	Banner struct {
 		BannerText         string
 		BannerStatingColor string
@@ -31,12 +38,16 @@ type (
 		BannerStyle        lipgloss.Style
 		RenderedBanner     string
 	}
+
+	// Help is a struct for the help menu in the home screen
 	Help struct {
 		model    help.Model
 		style    lipgloss.Style
 		IsActive bool
 	}
-	HomeScreenModel struct {
+
+	// ScreenModel is the main model for the home screen that aggregates all the models
+	ScreenModel struct {
 		// UI elements
 		Banner  *Banner
 		Tooltip *Tooltip
@@ -71,8 +82,9 @@ func newHelp() *Help {
 	}
 }
 
-func NewHomeScreenModel(defaultMsg string) HomeScreenModel {
-	return HomeScreenModel{
+// NewHomeScreenModel creates a new home screen model by returning a HomeScreenModel struct
+func NewHomeScreenModel(defaultMsg string) ScreenModel {
+	return ScreenModel{
 		Banner:  newBanner("#B14FFF", "#00FFA3"),
 		Input:   newInput(defaultMsg),
 		Window:  common.NewWindow(0, 0), // This doesn't mean window size is 0, 0
@@ -98,7 +110,7 @@ func newInput(defaultText string) *Input {
 }
 
 // InitializeStyles sets up all the styles for the home screen
-func (m *HomeScreenModel) InitializeStyles() {
+func (m *ScreenModel) InitializeStyles() {
 	// Initialize all component styles
 	m.Banner.MakeStyle(m.Window)
 	m.Input.MakeStyle(m.Window)

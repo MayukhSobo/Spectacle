@@ -5,7 +5,8 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-// Define a message type for navigation
+// NavigateToHome signals a request to return to the home screen.
+// Used for handling navigation between different views.
 type NavigateToHome struct{}
 
 // Update handles the update of the saved connections page
