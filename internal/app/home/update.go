@@ -7,10 +7,12 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-type ShowSavedConnsMsg struct{}
+type (
+	ShowSavedConnsMsg struct{}
 
-// Define a message type for navigation
-type NavigateToSavedConns struct{}
+	// Define a message type for navigation
+	NavigateToSavedConns struct{}
+)
 
 func (m HomeScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd = nil
