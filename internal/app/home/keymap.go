@@ -9,20 +9,21 @@ type keyMap struct {
 	Quit    key.Binding
 	Clear   key.Binding
 	Show    key.Binding
-	Help    key.Binding
 	Command key.Binding
 }
 
 func (k keyMap) ShortHelp() []key.Binding {
-	return []key.Binding{k.Help, k.Quit, k.Connect, k.Command}
+	// Only show toggle mode help in edit mode
+	return []key.Binding{k.Command}
 }
 
 // FullHelp returns keybindings for the expanded help view. It's part of the
 // key.Map interface.
 func (k keyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
-		{k.Use, k.Save, k.Connect, k.Clear, k.Show}, // first column
-		{k.Help, k.Quit}, // second column
+		{k.Use, k.Save, k.Connect},
+		{k.Clear, k.Show, k.Quit},
+		{k.Command},
 	}
 }
 
@@ -38,7 +39,7 @@ func newKeyMap() *keyMap {
 		),
 		Connect: key.NewBinding(
 			key.WithKeys("c"),
-			key.WithHelp("c", "connect to endpoint"),
+			key.WithHelp("c", "connect"),
 		),
 		Quit: key.NewBinding(
 			key.WithKeys("q"),
@@ -51,10 +52,6 @@ func newKeyMap() *keyMap {
 		Show: key.NewBinding(
 			key.WithKeys("l"),
 			key.WithHelp("l", "list saved addresses"),
-		),
-		Help: key.NewBinding(
-			key.WithKeys("?"),
-			key.WithHelp("?", "toggle help"),
 		),
 		Command: key.NewBinding(
 			key.WithKeys("tab"),

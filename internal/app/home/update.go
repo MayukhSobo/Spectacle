@@ -22,17 +22,15 @@ func (m HomeScreenModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		logger.Log.Debugf("Height: %d, Width: %d", msg.Height, msg.Width)
 	case tea.KeyMsg:
 		if key.Matches(msg, m.Keys.Command) {
-			logger.Log.Debugf("Command Mode!")
+			logger.Log.Debugf("Toggling command mode")
 			m.Help.IsActive = !m.Help.IsActive
+			m.Help.model.ShowAll = m.Help.IsActive
 		}
 		if m.Help.IsActive {
 			switch {
 			case key.Matches(msg, m.Keys.Quit):
 				logger.Log.Debug("Received quit key to exit the application")
 				cmd = tea.Quit
-			case key.Matches(msg, m.Keys.Help):
-				m.Help.model.ShowAll = !m.Help.model.ShowAll
-				cmd = tea.ClearScreen
 			case key.Matches(msg, m.Keys.Connect):
 				m.Tooltip.Active = !m.Tooltip.Active
 				// Try to get the address from the input

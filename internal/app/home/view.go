@@ -27,6 +27,13 @@ func getStyledInput(m HomeScreenModel) string {
 func getStyledHelp(m HomeScreenModel) string {
 	helpModel := m.Help
 	helpModel.MakeStyle(m.Window)
+
+	if m.Help.IsActive {
+		// Show full help in command mode
+		return helpModel.style.Render(m.Help.model.View(m.Keys))
+	}
+
+	// Show only toggle mode help in edit mode
 	return helpModel.style.Render(m.Help.model.View(m.Keys))
 }
 
